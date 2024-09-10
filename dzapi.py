@@ -101,7 +101,7 @@ class DeezerAPI:
         if not user_data['USER']['USER_ID']:
             self.s.cookies.clear()
             raise self.exception('Invalid arl')
-
+        print('ARL Country:', self.country)
         return user_data
 
     def get_track(self, id):
