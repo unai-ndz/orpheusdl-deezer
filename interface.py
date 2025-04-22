@@ -38,11 +38,6 @@ class ModuleInterface:
 
         self.session = DeezerAPI(self.exception, self.settings['client_id'], self.settings['client_secret'], self.settings['bf_secret'])
         arl = module_controller.temporary_settings_controller.read('arl')
-        if arl:
-            try:
-                self.session.login_via_arl(arl)
-            except self.exception:
-                self.login(self.settings['email'], self.settings['password'])
 
         self.quality_parse = {
             QualityEnum.MINIMUM: 'MP3_128',
@@ -57,11 +52,16 @@ class ModuleInterface:
             CoverCompressionEnum.high: 80,
             CoverCompressionEnum.low: 50
         }
-        if arl:
-            self.check_sub()
+        try:
+            self.login(self.settings['arl'])
+        except:
+            self.login(arl)
 
-    def login(self, email: str, password: str):
-        arl, _ = self.session.login_via_email(email, password)
+    def login(self, arl: str):
+        if arl:
+            self.session.login_via_arl(arl)
+        else:
+            return
         self.tsc.set('arl', arl)
         self.check_sub()
 

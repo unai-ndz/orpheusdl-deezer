@@ -7,7 +7,7 @@
 
 ## Installation
 - Clone the repository from your ```orpheusdl``` directory:\
-```git clone https://github.com/uhwot/orpheusdl-deezer modules/deezer```
+```git clone https://github.com/anonbaby/orpheusdl-deezer modules/deezer```
 - Update ```config/settings.json``` with Deezer settings:\
 ```python orpheus.py```
 
@@ -33,5 +33,10 @@ If original cover size is smaller than the one specified, falls back to 1200px
 | `client_id`     | Client ID used for login                            |
 | `client_secret` | Client secret used for login                        |
 | `bf_secret`     | Constant for deriving key used for track decryption |
-| `email`         | Account email                                       |
-| `password`      | Account password                                    |
+| `track_url_key` | Key used for legacy track URL generation            |
+| `prefer_mhm1`   | Downloads MHM1 360RA formats instead of MHA1        |
+| `arl`           | arl (set it if you want to update)                  |
+
+## Memo
+https://t.me/orpheusdl/7
+The above link is not affiliated with me nor OrpheusDL.
