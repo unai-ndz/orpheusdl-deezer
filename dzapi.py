@@ -60,7 +60,7 @@ class DeezerAPI:
             self.license_token = resp['results']['USER']['OPTIONS']['license_token']
             self.renew_timestamp = ceil(time())
             self.language = resp['results']['USER']['SETTING']['global']['language']
-            
+
             self.available_formats = ['MP3_128']
             format_dict = {'web_hq': 'MP3_320', 'web_lossless': 'FLAC'}
             for k, v in format_dict.items():
@@ -72,7 +72,7 @@ class DeezerAPI:
     def login_via_email(self, email, password):
         # server sends set-cookie header with anonymous sid
         self.s.get('https://www.deezer.com')
-        
+
         password = MD5.new(password.encode()).hexdigest()
 
         params = {
@@ -116,7 +116,7 @@ class DeezerAPI:
 
     def get_track_cover(self, id):
         return self._api_call('song.getData', {'sng_id': id, 'array_default': ['ALB_PICTURE']})['ALB_PICTURE']
-    
+
     def get_track_data_by_isrc(self, isrc):
         resp = self.s.get(f'https://api.deezer.com/track/isrc:{isrc}').json()
         if 'error' in resp:
@@ -209,5 +209,5 @@ class DeezerAPI:
                     chunk = cipher.decrypt(chunk)
                 file.write(chunk)
                 bar.update(len(chunk))
-        
+
         bar.close()

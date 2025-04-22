@@ -10,7 +10,10 @@ from .dzapi import DeezerAPI
 module_information = ModuleInformation(
     service_name = 'Deezer',
     module_supported_modes = ModuleModes.download | ModuleModes.lyrics | ModuleModes.covers | ModuleModes.credits,
-    global_settings = {'client_id': '447462', 'client_secret': 'a83bf7f38ad2f137e444727cfc3775cf', 'bf_secret': ''},
+    global_settings = {'client_id': '447462', 'client_secret': 'a83bf7f38ad2f137e444727cfc3775cf', 'bf_secret': '',
+                       'skip_albums': { 'studio': False, 'live': False, 'karaoke': False },
+                       'add_tags': { 'studio': True, 'live': True, 'karaoke': False },
+                      },
     session_settings = {'email': '', 'password': ''},
     session_storage_variables = ['arl'],
     netlocation_constant = ['deezer', 'dzr'],
@@ -202,6 +205,14 @@ class ModuleInterface:
         album = data[album_id] if album_id in data else self.session.get_album(album_id)
         a_data = album['DATA']
 
+        if self.settings['skip_albums']['studio'] and a_data['SUBTYPES']['isStudio']:
+            return None
+        elif self.settings['skip_albums']['live'] and a_data['SUBTYPES']['isLive']:
+            return None
+        elif self.settings['skip_albums']['karaoke'] and a_data['SUBTYPES']['isKaraoke']:
+            return None
+
+
         # placeholder images can't be requested as pngs
         cover_type = self.default_cover.file_type if a_data['ALB_PICTURE'] != '' else ImageFileTypeEnum.jpg
 
@@ -219,8 +230,16 @@ class ModuleInterface:
             'upc': a_data['UPC'],
             'label': a_data['LABEL_NAME'],
             'album_artist': a_data['ART_NAME'],
-            'release_date': a_data.get('ORIGINAL_RELEASE_DATE') or a_data['PHYSICAL_RELEASE_DATE']
+            'release_date': a_data.get('ORIGINAL_RELEASE_DATE') or a_data['PHYSICAL_RELEASE_DATE'],
+            'extra_tags': {}
         }
+
+        if self.settings['add_tags']['studio']:
+            alb_tags.extra_tags.isStudio = str(a_data['SUBTYPES']['isStudio'])
+        elif self.settings['add_tags']['live']:
+            alb_tags.extra_tags.isLive = str(a_data['SUBTYPES']['isLive'])
+        elif self.settings['add_tags']['karaoke']:
+            alb_tags.extra_tags.isKaraoke = str(a_data['SUBTYPES']['isKaraoke'])
 
         return AlbumInfo(
             name = a_data['ALB_TITLE'],
